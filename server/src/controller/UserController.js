@@ -32,9 +32,9 @@ export const register = async (req, res, next) => {
 }
 
 export const login = async (req, res, next) => {
-    const { username, password } = req.body
+    const { email, password } = req.body
     try {
-        const user = await User.findOne({ where: { username: username } })
+        const user = await User.findOne({ where: { email: email } })
         if (!user) return next(createError(404, "User not found"))
         const match = await bcrypt.compare(password, user.password)
         if (!match) return next(createError(400, "Wrong password"))

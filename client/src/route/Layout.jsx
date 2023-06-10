@@ -11,7 +11,7 @@ export const Layout = () => {
   return (
     <div className=" h-full w-full bg-gray-100">
       <Navbar />
-      <div className=" w-full h-full md:pt-5 md:flex lg:px-32 md:px-10 gap-x-3 ">
+      <div className={` w-full h-full md:pt-5 md:flex lg:px-32 md:px-10 gap-x-3 `}>
         {location.pathname !== "/login" && <SideNav />}
         <Outlet />
         {location.pathname !== "/login" && <SideContent />}
