@@ -38,11 +38,11 @@ export const login = async (req, res, next) => {
         if (!user) return next(createError(404, "User not found"))
         const match = await bcrypt.compare(password, user.password)
         if (!match) return next(createError(400, "Wrong password"))
-        const token = jwt.sign({ id: user.id, username: user.username }, 'secret')
+        const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, 'secret')
         res.cookie('accsessToken', token, {
             httpOnly: true,
             maxAge: 2 * 24 * 60 * 60 * 1000
-        }).status(200).json({ id: user.id, username: user.username, avtar: user.avatar })
+        }).status(200).json({ id: user.id, username: user.username, avatar: user.avatar, email: user.email })
     } catch (error) {
         next(error)
     }

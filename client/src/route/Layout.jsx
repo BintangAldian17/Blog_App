@@ -1,20 +1,21 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Home from "../page/Home";
 import SideNav from "../components/SideNav";
 import SideContent from "../components/SideContent";
 import Navbar from "../components/Navbar";
 
 export const Layout = () => {
   const location = useLocation();
-  console.log(location);
+  const controlUi = ["/login", "/register", "/newuser", "/createpost"];
+  console.log(location.pathname);
   return (
     <div className=" h-full w-full bg-gray-100">
-      <Navbar />
+      {location.pathname !== "/newuser" && <Navbar />}
+
       <div className={` w-full h-full md:pt-5 md:flex lg:px-32 md:px-10 gap-x-3 `}>
-        {location.pathname !== "/login" && <SideNav />}
+        {!controlUi.includes(location.pathname) && <SideNav />}
         <Outlet />
-        {location.pathname !== "/login" && <SideContent />}
+        {!controlUi.includes(location.pathname) && <SideContent />}
       </div>
     </div>
   );

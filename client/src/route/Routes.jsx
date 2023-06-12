@@ -4,6 +4,8 @@ import { Layout } from "./Layout";
 import Login from "../page/Login";
 import UserSettings from "../page/UserSettings";
 import { ProtectedRoute } from "./ProtectedRoute";
+import NewUser from "../page/NewUser";
+import CreatePost from "../page/CreatePost";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -24,6 +26,22 @@ const Routes = () => {
           element: (
             <ProtectedRoute>
               <UserSettings />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/newuser",
+          element: (
+            <ProtectedRoute>
+              <NewUser />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/createpost",
+          element: (
+            <ProtectedRoute>
+              <CreatePost />
             </ProtectedRoute>
           ),
         },

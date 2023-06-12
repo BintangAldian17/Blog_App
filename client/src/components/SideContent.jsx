@@ -20,7 +20,7 @@ const SideContent = () => {
                   <a className=" w-full" href={e.url} target="blank">
                     <img src={e.urlToImage} alt="" />
                     <div className=" w-full px-2 pt-1">
-                      <h1 className=" text-sm">{`${e.description.slice(0, 100)}...`}</h1>
+                      <h1 className=" text-sm">{`${e.description?.slice(0, 100)}...`}</h1>
                     </div>
                   </a>
                 </div>

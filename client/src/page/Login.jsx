@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { credentialsReq } from "../axios/requestMethod";
-import { Navigate, json, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { AuthContext } from "../Providers/AuthContext";
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
@@ -16,6 +17,7 @@ const schema = yup.object().shape({
 
 const Login = () => {
   const [redirect, setRedirect] = useState(false);
+  const { setCurrentUser } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
@@ -24,13 +26,11 @@ const Login = () => {
   } = useForm({ resolver: yupResolver(schema) });
   const watchValue = watch();
 
-  const onSubmit = async (data) => {
-    console.log({ data });
+  const onSubmit = async (payload) => {
     try {
-      const result = await credentialsReq.post("/login", data);
-      console.log(result.status === 200);
-      if (result) {
-        localStorage.setItem("user", JSON.stringify(result.data));
+      const { data } = await credentialsReq.post("/login", payload);
+      if (data) {
+        setCurrentUser(data);
         setRedirect(true);
       }
     } catch (error) {

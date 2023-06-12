@@ -7,3 +7,15 @@
     font-family: Poppins;
   }
 }
+
+.ql-toolbar {
+  @apply !border-none bg-gray-100;
+}
+
+.ql-container {
+  @apply !border-none max-h-[379px] overflow-y-auto;
+}
+
+.ql-editor {
+  @apply text-lg pt-8;
+}
