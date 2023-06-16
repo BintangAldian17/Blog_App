@@ -12,6 +12,7 @@ const Post = db.define('post', {
     },
     cover: {
         type: DataTypes.TEXT,
+        allowNull: false
     },
     img: {
         type: DataTypes.TEXT,
@@ -20,15 +21,16 @@ const Post = db.define('post', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    sub_heading: {
+    content: {
         type: DataTypes.STRING,
         allowNull: false
-    },
+    }
 }, {
     freezeTableName: true
 })
 
 User.hasMany(Post, { foreignKey: "userId", onDelete: "CASCADE" })
 Post.belongsTo(User, { foreignKey: "userId" })
+
 
 export default Post

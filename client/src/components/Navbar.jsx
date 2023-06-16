@@ -45,9 +45,11 @@ const Navbar = () => {
           {currentUser ? (
             // Show When User Login
             <div className=" w-fit h-full flex gap-x-5 items-center">
-              <button className=" md:w-28 w-24 h-full bg-white border border-blue-600 rounded-md font-base hover:bg-blue-600 transition-all ease-in-out duration-300 text-blue-600 hover:text-white hover:font-semibold md:font-normal font-medium text-sm md:text-base">
+              <Link
+                to="/createpost"
+                className=" flex items-center justify-center md:w-28 w-24 h-full bg-white border border-blue-600 rounded-md font-base hover:bg-blue-600 transition-all ease-in-out duration-300 text-blue-600 hover:text-white hover:font-semibold md:font-normal font-medium text-sm md:text-base">
                 Create Post
-              </button>
+              </Link>
               <div className=" w-6 h-full">
                 <GrNotification className=" w-full h-full" />
               </div>

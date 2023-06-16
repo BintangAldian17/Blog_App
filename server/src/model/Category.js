@@ -7,17 +7,18 @@ const { DataTypes } = Sequelize
 const Category = db.define('category', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true
     },
     category_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true,
+        primaryKey: true
     },
 }, {
     freezeTableName: true
 })
 
-Category.hasMany(Post, { foreignKey: 'categoryId', onDelete: 'CASCADE', onUpdate: "CASCADE" })
-Post.belongsTo(Category, { foreignKey: 'categoryId' })
+Category.hasMany(Post, { foreignKey: 'category_name', onDelete: 'CASCADE', onUpdate: "CASCADE" })
+Post.belongsTo(Category, { foreignKey: 'category_name' })
 
 export default Category

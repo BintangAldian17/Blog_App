@@ -5,7 +5,9 @@ import cookieParser from "cookie-parser"
 import router from "./routes/route.js"
 import cors from "cors"
 import bodyParser from "body-parser"
-import User from "./model/User.js"
+import { errorMiddleware } from "./middleware/error-middleware.js"
+import Category from "./model/Category.js"
+import Post from "./model/Post.js"
 
 dotenv.config()
 
@@ -24,6 +26,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: "http://localhost:5173", credentials: true }))
+
+app.use(errorMiddleware)
 app.use('/api/v1', router)
 
 app.use((err, req, res, next) => {
