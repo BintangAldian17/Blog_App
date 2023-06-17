@@ -11,6 +11,7 @@ const createPostValidation = Joi.object({
 const getPostValidation = Joi.object({
     category: Joi.string().optional(),
     page: Joi.number().min(1).positive(),
+    top: Joi.number().default(0).min(0).max(1).optional()
 })
 
 const deletePostValidation = Joi.object({
@@ -18,8 +19,13 @@ const deletePostValidation = Joi.object({
     userId: Joi.string().required()
 })
 
+const getSinglePostValidation = Joi.string().required()
+
+const getOtherPostValidation = Joi.string().required()
 export {
     createPostValidation,
     getPostValidation,
-    deletePostValidation
+    deletePostValidation,
+    getSinglePostValidation,
+    getOtherPostValidation
 }

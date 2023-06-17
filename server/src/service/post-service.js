@@ -1,10 +1,9 @@
 import { validate } from "../validator/validation.js"
-import { createPostValidation, deletePostValidation, getPostValidation } from "../validator/post-validation.js"
+import { createPostValidation, deletePostValidation, getOtherPostValidation, getPostValidation, getSinglePostValidation } from "../validator/post-validation.js"
 import Post from "../model/Post.js"
 import { ResponseError } from "../error/response-error.js"
-
 import LikePost from "../model/LikePost.js"
-import { Sequelize } from "sequelize"
+import { Sequelize, or } from "sequelize"
 
 export const createPostService = async (user, request) => {
     const post = validate(createPostValidation, request)
@@ -14,34 +13,101 @@ export const createPostService = async (user, request) => {
 export const getPostService = async (category) => {
     const getPost = validate(getPostValidation, category)
 
-    let filter = {}
-    if (getPost.category) {
-        filter = {
+    if (getPost.top === 1 && getPost.category) {
+        const post = await Post.findAll({
             where: {
                 category_name: getPost.category
-            }
-        }
+            },
+            attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt', [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'], [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like']],
+            include: [{
+                model: LikePost,
+                as: "likes",
+                attributes: []
+            }],
+            group: ['post.id',],
+            order: [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']],
+            raw: true,
+        })
+
+        const convertUserIdToArray = post.map(e => ({ ...e, like: e.like ? e.like.split(',') : [] }))
+        return convertUserIdToArray
     }
-    return await Post.findAll({
-        include: {
-            model: LikePost,
-            attributes: ['userId']
-        },
-        ...filter
-    })
+    if (getPost.top === 1 && !getPost.category) {
+        const post = await Post.findAll({
+            attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt', [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'], [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like']],
+            include: [{
+                model: LikePost,
+                as: "likes",
+                attributes: []
+            }],
+            group: ['post.id',],
+            order: [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']],
+            raw: true,
+        })
+
+        const convertUserIdToArray = post.map(e => ({ ...e, like: e.like ? e.like.split(',') : [] }))
+        return convertUserIdToArray
+    }
+    if (getPost.top === 0 && getPost.category) {
+        return await Post.findAll({
+            where: {
+                category_name: getPost.category
+            },
+            include: {
+                model: LikePost,
+                attributes: ['userId']
+            },
+            order: [['createdAt', 'DESC']]
+        })
+    } else {
+        return await Post.findAll({
+            include: {
+                model: LikePost,
+                attributes: ['userId']
+            },
+            order: [['createdAt', 'DESC']]
+        })
+    }
 }
 
 export const deletePostService = async (user, request) => {
     const deletePost = validate(deletePostValidation, request)
-
-    if (user !== deletePost.userId) throw new ResponseError(400, 'you can dlete only your post')
-    return Post.destroy({
+    const deleteP = await Post.destroy({
         where: {
+            userId: deletePost.userId,
             id: deletePost.postId
         }
     })
-
+    if (deleteP < 1) {
+        throw new ResponseError(403, 'you can delete only tour post')
+    }
+    if (!deletePost.postId) {
+        throw new ResponseError(404, 'post not found')
+    }
+    else {
+        return deleteP
+    }
 }
+
+export const getSinglePostService = async (request) => {
+    const postId = validate(getSinglePostValidation, request)
+    return await Post.findByPk(postId)
+}
+
+export const getOtherPostsService = async (request, postId) => {
+    const userId = validate(getOtherPostValidation, request)
+    const post = await Post.findAll({
+        where: {
+            userId: userId
+        },
+        order: [['createdAt', 'DESC']]
+    })
+
+    const filterPost = post.filter(e => e.id !== postId)
+    return filterPost
+}
+
+
 
 // export const getPostServive = async (category, filter) => {
 //     const post = validate(getPostValidation, category, filter)
