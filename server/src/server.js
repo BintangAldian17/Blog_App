@@ -8,6 +8,8 @@ import bodyParser from "body-parser"
 import { errorMiddleware } from "./middleware/error-middleware.js"
 import Category from "./model/Category.js"
 import Post from "./model/Post.js"
+import Comment from "./model/Comment.js"
+import BookMark from "./model/BookMark.js"
 
 dotenv.config()
 

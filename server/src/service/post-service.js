@@ -3,7 +3,9 @@ import { createPostValidation, deletePostValidation, getOtherPostValidation, get
 import Post from "../model/Post.js"
 import { ResponseError } from "../error/response-error.js"
 import LikePost from "../model/LikePost.js"
-import { Sequelize, or } from "sequelize"
+import { Sequelize } from "sequelize"
+import Comment from "../model/Comment.js"
+import User from "../model/User.js"
 
 export const createPostService = async (user, request) => {
     const post = validate(createPostValidation, request)
@@ -13,61 +15,56 @@ export const createPostService = async (user, request) => {
 export const getPostService = async (category) => {
     const getPost = validate(getPostValidation, category)
 
-    if (getPost.top === 1 && getPost.category) {
-        const post = await Post.findAll({
-            where: {
-                category_name: getPost.category
-            },
-            attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt', [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'], [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like']],
-            include: [{
-                model: LikePost,
-                as: "likes",
-                attributes: []
-            }],
-            group: ['post.id',],
-            order: [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']],
-            raw: true,
-        })
+    let whereCondition = {}
+    let orderCondition = []
 
-        const convertUserIdToArray = post.map(e => ({ ...e, like: e.like ? e.like.split(',') : [] }))
-        return convertUserIdToArray
+    console.log(orderCondition)
+
+    if (getPost.top === 1 && getPost.category) {
+        whereCondition.category_name = getPost.category
+        orderCondition = [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']]
     }
     if (getPost.top === 1 && !getPost.category) {
-        const post = await Post.findAll({
-            attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt', [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'], [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like']],
-            include: [{
+        whereCondition = {}
+        orderCondition = [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']]
+    }
+    if (getPost.top === 0 && getPost.category) {
+        whereCondition.category_name = getPost.category
+        orderCondition = []
+    }
+
+    const post = await Post.findAll({
+        where: whereCondition,
+        attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt',
+            [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'],
+            [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like'],
+            [Sequelize.fn('COUNT', Sequelize.col('comments.id')), 'commentCount']
+        ],
+        include: [
+            {
+                model: User,
+                as: "user",
+                attributes: ['avatar', 'id', 'username'],
+            },
+            {
                 model: LikePost,
                 as: "likes",
                 attributes: []
+            }, {
+                model: Comment,
+                as: "comments",
+                attributes: []
             }],
-            group: ['post.id',],
-            order: [[Sequelize.literal('likesCount'), 'DESC'], ['createdAt', 'DESC']],
-            raw: true,
-        })
+        group: ['post.id',],
+        order: orderCondition,
+        raw: true,
+        nest: true
+    })
 
-        const convertUserIdToArray = post.map(e => ({ ...e, like: e.like ? e.like.split(',') : [] }))
-        return convertUserIdToArray
-    }
-    if (getPost.top === 0 && getPost.category) {
-        return await Post.findAll({
-            where: {
-                category_name: getPost.category
-            },
-            include: {
-                model: LikePost,
-                attributes: ['userId']
-            },
-            order: [['createdAt', 'DESC']]
-        })
-    } else {
-        return await Post.findAll({
-            include: {
-                model: LikePost,
-                attributes: ['userId']
-            },
-            order: [['createdAt', 'DESC']]
-        })
-    }
+    const convertUserIdToArray = post.map(e => ({ ...e, like: e.like ? e.like.split(',') : [] }))
+    return convertUserIdToArray
+
+
 }
 
 export const deletePostService = async (user, request) => {
@@ -91,7 +88,12 @@ export const deletePostService = async (user, request) => {
 
 export const getSinglePostService = async (request) => {
     const postId = validate(getSinglePostValidation, request)
-    return await Post.findByPk(postId)
+    return await Post.findByPk(postId, {
+        include: [{
+            model: LikePost,
+            attributes: ['userId']
+        }]
+    })
 }
 
 export const getOtherPostsService = async (request, postId) => {
