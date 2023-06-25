@@ -6,6 +6,7 @@ import UserSettings from "../page/UserSettings";
 import { ProtectedRoute } from "./ProtectedRoute";
 import NewUser from "../page/NewUser";
 import CreatePost from "../page/CreatePost";
+import SinglePost from "../page/SinglePost";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -44,6 +45,10 @@ const Routes = () => {
               <CreatePost />
             </ProtectedRoute>
           ),
+        },
+        {
+          path: "/:username/:description",
+          element: <SinglePost />,
         },
       ],
     },

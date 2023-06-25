@@ -1,5 +1,6 @@
 import { createPostService, deletePostService, getOtherPostsService, getPostService, getSinglePostService } from "../service/post-service.js"
 import Post from "../model/Post.js";
+import Category from "../model/Category.js"
 
 export const creatPost = async (req, res, next) => {
     try {
@@ -65,6 +66,18 @@ export const getOtherPosts = async (req, res, next) => {
         res.status(200).json({
             data: result
         })
+    } catch (error) {
+        next(error)
+    }
+}
+
+// Get Category
+export const getCategory = async (req, res, next) => {
+    try {
+        const category = await Category.findAll({
+            attributes: ['id', 'category_name']
+        })
+        res.status(200).json(category)
     } catch (error) {
         next(error)
     }

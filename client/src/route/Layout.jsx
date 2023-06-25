@@ -6,16 +6,15 @@ import Navbar from "../components/Navbar";
 
 export const Layout = () => {
   const location = useLocation();
-  const controlUi = ["/login", "/register", "/newuser", "/createpost"];
+  const controlUi = ["/"];
   console.log(location.pathname);
   return (
-    <div className=" h-full w-full bg-gray-100">
+    <div className=" h-full w-full bg-gray-100 relative">
       {location.pathname !== "/newuser" && <Navbar />}
-
       <div className={` w-full h-full md:pt-5 md:flex lg:px-32 md:px-10 gap-x-3 `}>
-        {!controlUi.includes(location.pathname) && <SideNav />}
+        {controlUi.includes(location.pathname) && <SideNav />}
         <Outlet />
-        {!controlUi.includes(location.pathname) && <SideContent />}
+        {controlUi.includes(location.pathname) && <SideContent />}
       </div>
     </div>
   );

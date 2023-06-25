@@ -1,5 +1,6 @@
 import { ResponseError } from "../error/response-error.js";
 import Comment from "../model/Comment.js";
+import User from "../model/User.js";
 import { createCommentValidation, deleteCommentValidation, getCommentValidation } from "../validator/comment-validator.js";
 import { validate } from "../validator/validation.js";
 
@@ -18,6 +19,10 @@ export const getcommentService = async (request) => {
     return await Comment.findAll({
         where: {
             postId: postId
+        },
+        include: {
+            model: User,
+            attributes: ['id', 'avatar', 'username']
         },
         order: [['createdAt', 'DESC']]
     })

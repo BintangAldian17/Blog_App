@@ -35,7 +35,7 @@ export const getPostService = async (category) => {
 
     const post = await Post.findAll({
         where: whereCondition,
-        attributes: ['id', 'cover', 'img', 'heading', 'userId', 'content', 'category_name', 'createdAt', 'updatedAt',
+        attributes: ['id', 'cover', 'img', 'heading', 'userId', 'category_name', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('likes.id'),), 'likesCount'],
             [Sequelize.fn('GROUP_CONCAT', Sequelize.col('likes.userId')), 'like'],
             [Sequelize.fn('COUNT', Sequelize.col('comments.id')), 'commentCount']
@@ -92,6 +92,9 @@ export const getSinglePostService = async (request) => {
         include: [{
             model: LikePost,
             attributes: ['userId']
+        }, {
+            model: User,
+            attributes: ['id', 'username', 'email', 'avatar']
         }]
     })
 }
@@ -102,7 +105,9 @@ export const getOtherPostsService = async (request, postId) => {
         where: {
             userId: userId
         },
-        order: [['createdAt', 'DESC']]
+        attributes: ['id', 'heading', 'createdAt', 'category_name'],
+        order: [['createdAt', 'DESC']],
+        limit: 4
     })
 
     const filterPost = post.filter(e => e.id !== postId)

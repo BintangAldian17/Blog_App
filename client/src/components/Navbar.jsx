@@ -9,9 +9,8 @@ import { GrNotification } from "react-icons/gr";
 const Navbar = () => {
   const { openNav, setOpenNav } = useContext(NavContext);
   const { currentUser } = useContext(AuthContext);
-  console.log({ currentUser });
   return (
-    <header className=" w-full h-14 bg-white shadow-[3px_0_1px_0] shadow-gray-600 sticky top-0 z-50">
+    <header className=" w-full h-14 bg-white shadow-[3px_0_1px_0] shadow-gray-600 md:sticky fixed top-0 md:z-50 z-auto">
       <nav className=" flex items-center justify-between lg:px-24 md:px-10 px-2 w-full h-full py-2">
         {/* Search input */}
         <div className=" w-full h-full flex items-center gap-x-4 md:pl-0 pl-1">
@@ -36,9 +35,9 @@ const Navbar = () => {
           </div>
         </div>
         {/* Nav button */}
-        <div className=" w-fit h-full flex gap-x-3 items-center">
+        <div className=" w-fit h-full flex gap-x-5 items-center">
           {/* Hidden when md */}
-          <div className=" h-full w-6 md:hidden">
+          <div className=" h-full w-5 md:hidden">
             <BsSearch className=" w-full h-full" />
           </div>
           {/* hidden when small */}
@@ -47,13 +46,13 @@ const Navbar = () => {
             <div className=" w-fit h-full flex gap-x-5 items-center">
               <Link
                 to="/createpost"
-                className=" flex items-center justify-center md:w-28 w-24 h-full bg-white border border-blue-600 rounded-md font-base hover:bg-blue-600 transition-all ease-in-out duration-300 text-blue-600 hover:text-white hover:font-semibold md:font-normal font-medium text-sm md:text-base">
+                className=" lg:flex hidden    items-center justify-center md:w-28 w-24 h-full bg-white border border-blue-600 rounded-md font-base hover:bg-blue-600 transition-all ease-in-out duration-300 text-blue-600 hover:text-white hover:font-semibold md:font-normal font-medium text-sm md:text-base">
                 Create Post
               </Link>
-              <div className=" w-6 h-full">
+              <div className=" w-5 h-full">
                 <GrNotification className=" w-full h-full" />
               </div>
-              <div className=" md:w-9 md:h-9 rounded-full overflow-hidden">
+              <div className=" md:w-9 md:h-9 h-8 w-8 rounded-full overflow-hidden">
                 <img
                   src={`https://res.cloudinary.com/dbsawioum/image/upload/v1686483684/Blog_app/${currentUser.avatar}`}
                   className=" w-full h-full object-cover"

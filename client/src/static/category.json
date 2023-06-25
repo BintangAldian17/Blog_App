@@ -1,0 +1,29 @@
+{
+  "dataCategory": [
+    {
+      "id": 1,
+      "icons": "../../img/science-icon.svg",
+      "desc": "Science"
+    },
+    {
+      "id": 2,
+      "icons": "../../img/technology-icon.svg",
+      "desc": "Technology"
+    },
+    {
+      "id": 3,
+      "icons": "../../img/sports-icon.svg",
+      "desc": "Sports"
+    },
+    {
+      "id": 4,
+      "icons": "../../img/fhasion-icon.svg",
+      "desc": "Fashion"
+    },
+    {
+      "id": 5,
+      "icons": "../../img/movie-icon.svg",
+      "desc": "Movie"
+    }
+  ]
+}

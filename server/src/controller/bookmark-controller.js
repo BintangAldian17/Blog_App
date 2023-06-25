@@ -1,4 +1,4 @@
-import { createBookMarkService, getBookMarkService } from "../service/bookmark-service.js"
+import { createBookMarkService, deleteBookMarkService, getBookMarkService } from "../service/bookmark-service.js"
 
 export const createBookmark = async (req, res, next) => {
     try {
@@ -22,6 +22,20 @@ export const getBookMark = async (req, res, next) => {
         res.status(200).json({
             data: result
         })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteBookMark = async (req, res, next) => {
+    try {
+        const request = {
+            userId: req.userId,
+            postId: req.params.postId,
+            bookmarkId: req.params.bookmarkId
+        }
+        await deleteBookMarkService(request)
+        res.status(200).json('delete bookmark successfuly')
     } catch (error) {
         next(error)
     }

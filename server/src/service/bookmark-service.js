@@ -22,7 +22,13 @@ export const getBookMarkService = async (request) => {
         include:
         {
             model: Post,
-            attributes: ['id', 'heading', 'category_name', 'createdAt']
+            attributes: ['heading', 'createdAt', 'category_name'],
+            include: [
+                {
+                    model: User,
+                    attributes: ['username', 'id', 'avatar']
+                }
+            ]
         },
         order: [['createdAt', 'DESC']]
     })
@@ -30,11 +36,22 @@ export const getBookMarkService = async (request) => {
 
 export const deleteBookMarkService = async (request) => {
     const bookmark = validate(deleteBookMarkValidation, request)
-
-    return await BookMark.destroy({
+    const deleteBookMark = await BookMark.destroy({
         where: {
+            id: bookmark.bookmarkId,
             postId: bookmark.postId,
             userId: bookmark.userId
         }
     })
+
+    if (deleteBookMark < 1) {
+        throw ResponseError(403, 'you can only delete your bookmark')
+    }
+    if (!bookmark.bookmarkId) {
+        throw ResponseError(404, 'bookmark not found')
+    }
+    if (!bookmark.postId) {
+        throw ResponseError(404, 'post not found')
+    }
+    return deleteBookMark
 }
